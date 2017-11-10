@@ -34,12 +34,6 @@ Also the downloaded videos are 99% of the time in mp4 format, adjust
 accordingly. I will for ease-of-use sake also have the rename.sh file in this
 repo.
 
-One-liner / Script:
-find . -type f -name '*.mp4' | while read FILE ; do
-    newfile="$(echo ${FILE} |sed -e 's/\ /_/g' -e "s/'/-/g")" ;
-    mv "${FILE}" "${newfile}" ;
-done
-
 # Hosting it, how?
 So the one-liner in the script that get the video list relies on direcotry
 indexes being turned on, so you will need to fix that. Since this is the only
