@@ -67,7 +67,7 @@ for the videos you wish to highlight in your screensaver. You can easliy obtain 
 like so.
 
 ```bash
-youtube-dl -o "http://www.youtube.com/watch?v=%(id)s" --get-filename "$1" > /tmp/urls
+youtube-dl -o "http://www.youtube.com/watch?v=%(id)s" --get-filename "https://www.youtube.com/watch?list=PLdSUTU0oamrzINhr7CW-Fw41b__K-3DjB" > /tmp/urls
 ```
 Also it's not feasible to have this in the script itself, because as you will surely notice it takes a
 pretty long time to generate this list of YouTube URLs. If you wish to host this file some place else other
