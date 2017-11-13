@@ -8,10 +8,18 @@ echo "I require mpv but it's not installed. Aborting." >&2
 exit 1; }
 
 # use only wow movies.
-use_my_videos=1
+use_my_videos="0"
 
 # your own server.
-my_server="host.domain.tld/vidz"
+my_server="ehoba.monkii.net/vidz"
+
+# use youtube.
+use_youtube_videos="1"
+
+# youtube playlist url. either use a local file, or a url.
+# youtube_list="ehoba.monkii.net/vidz/wow-videos-youtube"
+youtube_list=""
+youtube_file="/tmp/youtube-playlist"
 
 # don't exclude current video from list. 
 # Set to 0 if you never want to see the same video on multiple screens.
@@ -43,9 +51,20 @@ comp_HK_B005_C011_t9_6M_tag0.mov)
 day_db=$XDG_CONFIG_HOME/.atv4-day
 night_db=$XDG_CONFIG_HOME/.atv4-night
 my_db=$XDG_CONFIG_HOME/.atv4-myvideos
+yt_db=$XDG_CONFIG_HOME/.atv4-youtube
 
 # Get list of my movies, pipe them directly into the my_db. You need to sed the path, in my case "vidz", from the line. change accordingly.
-MyArr=$(lftp -c du -a http://$my_server | sed -e 's/\/vidz//' -e 's/\///' -e 's/\ /_/g' -e "s/'/-/g"|awk -F " " '{ print $2 }'|sed -e '/^$/d' > $my_db)
+if [[ $use_my_videos -eq "1" ]]; then
+  MyArr=$(lftp -c du -a http://$my_server | sed -e 's/\/vidz//' -e 's/\///' -e 's/\ /_/g' -e "s/'/-/g"|awk -F " " '{ print $2 }'|sed -e '/^$/d' > $my_db)
+fi
+# get the youtube playlist.
+if [[ $use_youtube_videos -eq "1" ]]; then
+  if [[ $youtube_list == "" ]]; then
+    YouTubeArr=$(cat $youtube_file > $yt_db)
+  else
+    YouTubeArr=$(curl -s http://$youtube_list --output $yt_db)
+  fi
+fi
 
 runit() {
   [[ -s "$day_db" ]] || echo "${DayArr[@]}" | sed 's/ /\n/g' > "$day_db"
@@ -55,6 +74,8 @@ runit() {
   # where day is after 7AM and before 6PM
   if [[ $use_my_videos -eq "1" ]]; then
     use_db=$my_db
+  elif [[ $use_youtube_videos -eq "1" ]]; then
+    use_db=$yt_db
   else
     hour=$(date +%H)
     if [ "$hour" -gt 19 -o "$hour" -lt 7 ]; then
@@ -87,7 +108,9 @@ runit() {
     useit=$(sed -n "$rndpick p" "$use_db")
 
     # exclude the one we just picked to create the illusion that we NEVER repeat :)
-    sed -i "/$useit/d" "$use_db"
+    if [[ $do_not_exclude -eq 0 ]]; then
+      sed -i "/$useit/d" "$use_db"
+    fi
   fi
 }
 
@@ -109,7 +132,11 @@ do
     else
       URL="http://a1.phobos.apple.com/us/r1000/000/Features/atv/AutumnResources/videos"
     fi
-    mpv --really-quiet --no-audio --fs --no-stop-screensaver --wid="$XSCREENSAVER_WINDOW" --panscan=1.0 "$URL/$useit" &
+    if [[ $use_youtube_videos -eq "1" ]]; then    
+      mpv --really-quiet --no-audio --fs --no-stop-screensaver --wid="$XSCREENSAVER_WINDOW" --panscan=1.0 "$useit" &
+    else
+      mpv --really-quiet --no-audio --fs --no-stop-screensaver --wid="$XSCREENSAVER_WINDOW" --panscan=1.0 "$URL/$useit" &
+    fi
   fi
   pid=$!
   wait $pid
