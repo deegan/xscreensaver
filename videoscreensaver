@@ -11,14 +11,13 @@ exit 1; }
 use_my_videos="0"
 
 # your own server.
-my_server="ehoba.monkii.net/vidz"
+my_server="host.domain.tld/vidz"
 
 # use youtube.
 use_youtube_videos="1"
 
 # youtube playlist url. either use a local file, or a url.
-# youtube_list="ehoba.monkii.net/vidz/wow-videos-youtube"
-youtube_list=""
+youtube_list="host.domain.tld/playlist"
 youtube_file="/tmp/youtube-playlist"
 
 # don't exclude current video from list. 
