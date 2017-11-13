@@ -15,7 +15,9 @@ but you can also use brew.
 For the option to show up in Xscreensaver, you need to add this to your
 ~/.xscreensaver file.
 
+```
 "VideoScreenSaver"  videoscreensaver                                        \n\
+```
 
 And place the videoscreensaver file in like /usr/local/bin
 
@@ -25,7 +27,9 @@ you can create a playlist on YouTube and use youtube-dl do get all the videos
 from the list, or just create a new file on the server and add all the urls for
 the videos you wish to use as your screensaver, and then run this little thing.
 
+```bash
 for video in `cat youtube-list`; do youtube-dl -f 22 $video; done
+```
 
 And then you will need to rename all the files to remove any spaces and odd
 characters. Disclaimer: you might have to do more sed stuff than what I do if
@@ -42,6 +46,7 @@ the default nginx.conf http {  } bracket. Also the root is /opt/ytdl, add a
 index-file there, and create a vidz/ directory and put all your sanitized and
 renamed youtube videos there.
 
+```
 root   /opt/ytdl;
 location / {
     index  index.html index.htm;
@@ -49,15 +54,24 @@ location / {
 location /vidz {
         autoindex on;
 }
+```
 
 # Tweaks?
 So I save all my files in /vidz, you are free to change this, but you will need to edit the
 script yourself to fix it. I could have named it somethings else. Just change
 the "my_server" variable to be host/path.
 
-# todo
-Considering adding configuration to play videos straight from a YouTube
-playlist.
+# YouTube playlist
+So this functionality is very basic, it solely depends on YOU having a file containing all the URLs
+for the videos you wish to highlight in your screensaver. You can easliy obtain these using youtube-dl
+like so.
+
+```bash
+youtube-dl -o "http://www.youtube.com/watch?v=%(id)s" --get-filename "$1" > /tmp/urls
+```
+Also it's not feasible to have this in the script itself, because as you will surely notice it takes a
+pretty long time to generate this list of YouTube URLs. If you wish to host this file some place else other
+than on your computer, you should upload it as is and define the "youtube_list" variable instead of the "youtube_list".
 
 # Original source.
 So this is a clone and edited version of
