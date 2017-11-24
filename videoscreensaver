@@ -3,29 +3,15 @@
 [[ -z "$XDG_CONFIG_HOME" ]] &&
   XDG_CONFIG_HOME="$HOME/.config"
 
+if [ -e $HOME/.config/videoscreensaver.conf ]; then
+  source $HOME/.config/videoscreensaver.conf
+else
+  echo "Configuration file is missing."
+fi
+
 command -v mpv >/dev/null 2>&1 || {
 echo "I require mpv but it's not installed. Aborting." >&2
 exit 1; }
-
-# use only wow movies.
-use_my_videos="0"
-
-# your own server.
-my_server="host.domain.tld/vidz"
-
-# use youtube.
-use_youtube_videos="1"
-
-# youtube playlist url. either use a local file, or a url.
-youtube_list="host.domain.tld/playlist"
-youtube_file="/tmp/youtube-playlist"
-
-# don't exclude current video from list. 
-# Set to 0 if you never want to see the same video on multiple screens.
-do_not_exclude="1"
-
-# path of movies
-movies=/opt/ATV4
 
 # day and night videos
 DayArr=(b1-1.mov b1-3.mov b2-1.mov b2-2.mov b3-2.mov b3-3.mov b4-1.mov b4-2.mov
@@ -58,7 +44,7 @@ if [[ $use_my_videos -eq "1" ]]; then
 fi
 # get the youtube playlist.
 if [[ $use_youtube_videos -eq "1" ]]; then
-  if [[ $youtube_list == "" ]]; then
+  if [ -e $youtube_file ]; then
     YouTubeArr=$(cat $youtube_file > $yt_db)
   else
     YouTubeArr=$(curl -s http://$youtube_list --output $yt_db)
@@ -122,7 +108,7 @@ while (true) #!(keystate lshift)
 do
   runit
   if [[ -f "$movies/$useit" ]]; then
-    # file is on filesystem so just play it
+    # file is on filesystem so just play it"
     mpv --really-quiet --no-audio --fs --no-stop-screensaver --wid="$XSCREENSAVER_WINDOW" --panscan=1.0 "$movies/$useit" &
   else
     # no file on filesystem so try to stream it
@@ -134,6 +120,7 @@ do
     if [[ $use_youtube_videos -eq "1" ]]; then    
       mpv --really-quiet --no-audio --fs --no-stop-screensaver --wid="$XSCREENSAVER_WINDOW" --panscan=1.0 "$useit" &
     else
+      echo "$URL/$useit"
       mpv --really-quiet --no-audio --fs --no-stop-screensaver --wid="$XSCREENSAVER_WINDOW" --panscan=1.0 "$URL/$useit" &
     fi
   fi
