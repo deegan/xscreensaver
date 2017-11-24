@@ -19,7 +19,27 @@ For the option to show up in Xscreensaver, you need to add this to your
 "VideoScreenSaver"  videoscreensaver                                        \n\
 ```
 
-And place the videoscreensaver file in like /usr/local/bin
+And place the videoscreensaver file in like /usr/local/bin. Next up is saving
+the configuration file to your $HOME/.config/ directory. This file now contains
+any settings I've added to the original version. The comments should be self
+explanatory but here's a brief overview.
+
+Setting this variable to 1 will make the script use the URL setting in
+$my_server to fetch videos for you screensaver.
+```
+export use_my_videos="0"
+export my_server="http://my.server/vidz"
+```
+
+Settings this variable to 1 will make the script use the list of YouTube videos
+either from $youtube_list, or $youtube_file. Leaving one of those blank will
+ignore it.
+
+```
+export use_youtube_videos="1"
+export youtube_list="http//my.server/vidz/youtube-playlist"
+export youtube_file="/tmp/youtube-playlist"
+```
 
 # Getting videos.
 So here are just some tips and tricks do get the files onto your server. Either
